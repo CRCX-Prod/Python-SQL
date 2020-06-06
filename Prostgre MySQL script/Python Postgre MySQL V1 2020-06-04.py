@@ -78,3 +78,5 @@ print(query_columns)
 
 cur.close()
 conn.close()
+
+mysql_module.insertData(queryColumns,2,3)

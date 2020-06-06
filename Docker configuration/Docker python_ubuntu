@@ -41,7 +41,6 @@ nano python1.py
 #Run script
 python python1.py
 
-
 #create MySQL Test connection
 touch MySQLtest.py
 nano MySQLtest.py
