@@ -12,22 +12,6 @@ def connection ():
   )
  print(mydb)
 
-def test ():
-    print("Hello world")
-
-
-def insertData (tableName,columns,data): #tableName,columns,data
-
-    #vartext = "INSERT INTO {} VALUES {}"
-
-    #print(vartext.format(tableName,data)
-#    quantity = 3
-#    itemno = 567
-#    price = 49.95
-    myquery = "INSERT INTO {} pieces of item {} VALUES {}"
-    print(myquery.format(tableName, columns, data))
-
-
 #format From Prosgre query to MySQL
 def formatColumns(postgreColumns):
 
@@ -58,19 +42,22 @@ def formatIncr (postgreColumns):
 #Insert data
 def insertData (myTable,myColumns,myData):
 
+    """
     mydb = mysql.connector.connect(
         host="192.168.1.153",
         user="admin",
         passwd="P@ssw0rd",
         database="00_cos_warehouse"
         )
-  
+    """
+    
     table = myTable
     
-    sql = "INSERT INTO {} {} VALUES {}"
-    sql = sql.format(table,myColumns,myData)
+    myColumnsString = formatColumns(myColumns)
+    myIncr = formatIncr(myColumns)
 
-    return sql
+    sql = "INSERT INTO {} {} VALUES {}"
+    sql = sql.format(myTable,myColumnsString,myIncr)
 
 mycursor = mydb.cursor()
 
@@ -81,3 +68,4 @@ mycursor.execute(sql, val)
 mydb.commit()
 
 print(mycursor.rowcount, "record inserted.")
+
