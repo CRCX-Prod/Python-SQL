@@ -42,23 +42,72 @@ def formatIncr (postgreColumns):
 #Insert data
 def insertData (myTable,myColumns,myData):
 
-    """
     mydb = mysql.connector.connect(
         host="192.168.1.153",
         user="admin",
         passwd="P@ssw0rd",
         database="00_cos_warehouse"
         )
-    """
-    
-    table = myTable
-    
+        
     myColumnsString = formatColumns(myColumns)
     myIncr = formatIncr(myColumns)
 
     sql = "INSERT INTO {} {} VALUES {}"
     sql = sql.format(myTable,myColumnsString,myIncr)
 
+    mycursor.execute(sql, myData)
+
+    mydb.commit()
+
+def dropTable (myTable):
+    
+    mydb = mysql.connector.connect(
+        host="192.168.1.153",
+        user="admin",
+        passwd="P@ssw0rd",
+        database="00_cos_warehouse"
+        )
+
+    mycursor = mydb.cursor()
+
+    sql = "DROP TABLE {}"
+    sql = sql.format(myTable)
+
+    mycursor.execute(sql) 
+    
+    print("Table "+ myTable +" dropped")
+    
+
+def createTable (myTable,myColumns):
+
+    mydb = mysql.connector.connect(
+        host="192.168.1.153",
+        user="admin",
+        passwd="P@ssw0rd",
+        database="00_cos_warehouse"
+        )
+
+    mycursor = mydb.cursor()
+    
+    sItem = "`{}` VARCHAR(255)"
+    lColumns = []
+    for x in myColumns:
+       lColumns.append(sItem.format(x))
+   
+    sColumns = str(lColumns)
+    sColumns = sColumns.replace("[","(")
+    sColumns = sColumns.replace("]",")")
+    sColumns = sColumns.replace("'","")
+
+    #sql = "CREATE TABLE customers (`col1` VARCHAR(255), 'col2' VARCHAR(255))")
+    sql = "CREATE TABLE {} {}"
+    sql = sql.format(myTable,sColumns)
+
+    mycursor.execute(sql)
+    mydb.commit()
+    print("Table "+ myTable + " created")
+
+"""
 mycursor = mydb.cursor()
 
 sql = "INSERT INTO site_script (Site ID, Entity) VALUES (%s, %s)"
@@ -68,4 +117,4 @@ mycursor.execute(sql, val)
 mydb.commit()
 
 print(mycursor.rowcount, "record inserted.")
-
+"""

@@ -45,3 +45,6 @@ python python1.py
 touch MySQLtest.py
 nano MySQLtest.py
 python MySQLtest.py
+
+#supprimer fichier
+rm MySQLtest.py
