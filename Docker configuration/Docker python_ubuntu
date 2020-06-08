@@ -28,6 +28,8 @@ pip3 install --upgrade pip
 #install Cron tab for script automation
 
 apt update
+apt install cron
+systemctl enable cron
 
 
 

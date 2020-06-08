@@ -120,4 +120,3 @@ def createTable (connection,myTable,myColumns):
     mycursor.execute(sql)
     connection.commit()
     print("Table "+ myTable + " created")
-
