@@ -9,6 +9,7 @@ docker rename upbeat_curran python_ubuntu
 docker start python_ubuntu
 docker exec -it python_ubuntu bash
 
+#______________
 #install python
 
 apt update
@@ -16,16 +17,20 @@ apt install software-properties-common
 add-apt-repository ppa:deadsnakes/ppa
 apt install python3.7
 
+#___________
 #install Pip
 
 apt install python3-pip
 pip3 --version
 pip3 install --upgrade pip
 
-#**error**
-pip install psycopg2
+#______________________________________
+#install Cron tab for script automation
 
-pip install pygresql       
+apt update
+
+
+
 
 #working
 pip install psycopg2-binary
@@ -48,3 +53,4 @@ python MySQLtest.py
 
 #supprimer fichier
 rm MySQLtest.py
+

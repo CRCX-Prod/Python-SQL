@@ -1,18 +1,21 @@
 import mysql.connector
 
-def connection ():
+#________________
+#MySQL connection
 
- #MySQL connection
+
+def connection():
  
- mydb = mysql.connector.connect(
-  host="192.168.1.153",
-  user="admin",
-  passwd="P@ssw0rd",
-  database="00_python"
-  )
- print(mydb)
+    mydb = mysql.connector.connect(
+    host="192.168.1.153",
+    user="admin",
+    passwd="P@ssw0rd",
+    database="00_python"
+    )
 
+#__________________________________
 #format From Prosgre query to MySQL
+
 def formatColumns(postgreColumns):
 
     #Change in string
@@ -24,7 +27,9 @@ def formatColumns(postgreColumns):
 
     return myColumns
 
+#______________________________
 #Create the (%s, %s,...) string
+
 def formatIncr (postgreColumns):
 
     myIncr = []
@@ -38,8 +43,9 @@ def formatIncr (postgreColumns):
 
     return myIncr
 
+#____________________
+#Insert data in table
 
-#Insert data
 def insertData (connection,myTable,myColumns,myData):
 
     """
@@ -61,7 +67,7 @@ def insertData (connection,myTable,myColumns,myData):
     mycursor.execute(sql, myData)
     connection.commit()
 
-    print(mycursor.rowcount, "record inserted in ",myTable)
+    print(mycursor.rowcount, "records inserted in ",myTable)
 
 def dropTable (connection,myTable):
     
@@ -115,14 +121,3 @@ def createTable (connection,myTable,myColumns):
     connection.commit()
     print("Table "+ myTable + " created")
 
-"""
-mycursor = mydb.cursor()
-
-sql = "INSERT INTO site_script (Site ID, Entity) VALUES (%s, %s)"
-val = ("John", "Highway 21")
-mycursor.execute(sql, val)
-
-mydb.commit()
-
-print(mycursor.rowcount, "record inserted.")
-"""
