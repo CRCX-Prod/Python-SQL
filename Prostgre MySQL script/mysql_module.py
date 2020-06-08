@@ -3,7 +3,6 @@ import mysql.connector
 #________________
 #MySQL connection
 
-
 def connection():
  
     mydb = mysql.connector.connect(
@@ -69,6 +68,9 @@ def insertData (connection,myTable,myColumns,myData):
 
     print(mycursor.rowcount, "records inserted in ",myTable)
 
+#__________
+#Drop table
+
 def dropTable (connection,myTable):
     
     """
@@ -89,6 +91,8 @@ def dropTable (connection,myTable):
     
     print("Table "+ myTable +" dropped")
     
+#_______________________
+#Create table and fields
 
 def createTable (connection,myTable,myColumns):
 

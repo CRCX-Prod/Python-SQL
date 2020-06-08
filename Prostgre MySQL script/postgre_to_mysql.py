@@ -36,3 +36,4 @@ def createFromQuery (postConn,myConn,tableName,postQuery):
     #mysql_module.dropTable(myConn,tableName)
     mysql_module.createTable(myConn,tableName,postColumns)
     mysql_module.insertData(myConn,tableName,postColumns,postData)
+    

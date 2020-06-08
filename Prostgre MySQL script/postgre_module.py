@@ -21,3 +21,4 @@ def getData (connection,query):
 
     query_results = cur.fetchall()
     return query_results
+    
