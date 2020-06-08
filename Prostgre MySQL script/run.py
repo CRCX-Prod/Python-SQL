@@ -1,6 +1,11 @@
 import psycopg2
+import mysql
 import mysql_module
 import postgre_module
+import postgre_to_mysql
+
+
+table = "site_test"
 
 postgreQuery = """Select b_sites.data->>'site_id_text' as "Site ID" ,  
  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_sites.data->>'entity'), '') as "Entity"
@@ -19,18 +24,13 @@ postgreConn = psycopg2.connect(
     password="HPdhyHCYc8SfLY05EZKOSeH1ekoMXgzZuf44d4gP"
     )
 
-#mysql_module.connection ()
+mysqlConn = mysql.connector.connect(
+    host="192.168.1.153",
+    user="admin",
+    passwd="P@ssw0rd",
+    database="00_python"
+    )
 
-#Working
-queryColumns = postgre_module.getColumns (postgreConn,postgreQuery)
+#print(mysqlConn)
 
-queryData = postgre_module.getData (postgreConn,postgreQuery)
-
-print(queryColumns)
-
-print(queryData)
-
-postgreConn.close()
-
-mysql_module.insertData("Table",queryColumns,queryData)
-
+postgre_to_mysql.insertFromQuery(postgreConn,mysqlConn,table,postgreQuery)

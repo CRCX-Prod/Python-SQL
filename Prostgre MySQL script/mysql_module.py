@@ -8,7 +8,7 @@ def connection ():
   host="192.168.1.153",
   user="admin",
   passwd="P@ssw0rd",
-  database="00_cos_warehouse"
+  database="00_python"
   )
  print(mydb)
 
@@ -40,15 +40,18 @@ def formatIncr (postgreColumns):
 
 
 #Insert data
-def insertData (myTable,myColumns,myData):
+def insertData (connection,myTable,myColumns,myData):
 
+    """
     mydb = mysql.connector.connect(
         host="192.168.1.153",
         user="admin",
         passwd="P@ssw0rd",
         database="00_cos_warehouse"
         )
-        
+    """    
+    mycursor = connection.cursor()
+
     myColumnsString = formatColumns(myColumns)
     myIncr = formatIncr(myColumns)
 
@@ -56,19 +59,22 @@ def insertData (myTable,myColumns,myData):
     sql = sql.format(myTable,myColumnsString,myIncr)
 
     mycursor.execute(sql, myData)
+    connection.commit()
 
-    mydb.commit()
+    print(mycursor.rowcount, "record inserted in ",myTable)
 
-def dropTable (myTable):
+def dropTable (connection,myTable):
     
+    """
     mydb = mysql.connector.connect(
         host="192.168.1.153",
         user="admin",
         passwd="P@ssw0rd",
         database="00_cos_warehouse"
         )
+    """
 
-    mycursor = mydb.cursor()
+    mycursor = connection.cursor()
 
     sql = "DROP TABLE {}"
     sql = sql.format(myTable)
@@ -78,16 +84,18 @@ def dropTable (myTable):
     print("Table "+ myTable +" dropped")
     
 
-def createTable (myTable,myColumns):
+def createTable (connection,myTable,myColumns):
 
+    """
     mydb = mysql.connector.connect(
         host="192.168.1.153",
         user="admin",
         passwd="P@ssw0rd",
         database="00_cos_warehouse"
         )
+    """
 
-    mycursor = mydb.cursor()
+    mycursor = connection.cursor()
     
     sItem = "`{}` VARCHAR(255)"
     lColumns = []
@@ -104,7 +112,7 @@ def createTable (myTable,myColumns):
     sql = sql.format(myTable,sColumns)
 
     mycursor.execute(sql)
-    mydb.commit()
+    connection.commit()
     print("Table "+ myTable + " created")
 
 """
