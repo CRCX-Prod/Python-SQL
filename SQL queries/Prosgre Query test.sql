@@ -32,6 +32,8 @@ Select b_sites.id AS id,  b_sites.data->>'site_id_text' as "Site ID" ,
  WHERE b_sites.form_id in (14) AND b_sites.enabled  = true AND ( b_sites.embedded = false OR b_sites.embedded is null)  
 ;
 
+
+
 Test Site only
 
 
@@ -61,14 +63,9 @@ Select b_sites.id AS id,  b_sites.data->>'site_id_text' as "Site ID" ,
   b_sites.enabled  = true AND 
  ( b_sites.embedded = false OR b_sites.embedded is null) AND 
  ((b_sites.data ->>'entity') IN ('2'))
-;
 
-table = table_test
 
-%___________________________________________________________________________
-%sites
-
-table = "sites"
+%Sites
 
 Select
   b_sites.data->>'site_id_text' as "Site ID" ,
@@ -105,12 +102,8 @@ Select
   b_sites.enabled  = true AND 
  ( b_sites.embedded = false OR b_sites.embedded is null) AND 
  ((b_sites.data ->>'entity') IN ('2'))
-;
 
-%___________________________________________________________________________
 %tenants
-
-table = "tenants"
 
 Select
   b_tenants.data->>'tenant_site_id' as "Tenant ID",
@@ -132,122 +125,9 @@ Select
   b_tenants.enabled  = true AND 
  ( b_tenants.embedded = false OR b_tenants.embedded is null) AND 
  ((b_tenants.data ->>'entity') IN ('2'))
-;
 
-%___________________________________________________________________________
-%Teams
 
-table = "teams"
-
-select
-  b_teams.data->>'system_name' as "system_name",
-  b_teams.data->>'team_name' as "Team name"
- FROM forms_data as b_teams 
- WHERE b_teams.form_id in (4) AND 
-  b_teams.enabled  = true AND 
- ( b_teams.embedded = false OR b_teams.embedded is null)
-;
-
-%___________________________________________________________________________
-%Users
-
-table = "users"
-
-select
-  b_teams.data->>'username' as "system_name",
-  b_teams.data->>'loginName' as "Login name",
-  b_teams.data->>'firstname' as "First name",
-  b_teams.data->>'lastname' as "Last name"
- FROM forms_data as b_teams 
- WHERE b_teams.form_id in (1) AND 
-  b_teams.enabled  = true AND 
- ( b_teams.embedded = false OR b_teams.embedded is null)
-;
-
-%___________________________________________________________________________
-#Customer requests
-
-table = "customer requests"
-
-select
-  b_requests.data->>'site_id_text' as "Site ID",
-  b_requests.data->'request_id' ->>'prefix' as "CAR ID - prefix",
-  b_requests.data->'request_id' ->>'number' as "CAR ID - number",
-  CONCAT(b_requests.data->'request_id' ->>'prefix', '-',b_requests.data->'request_id' ->>'number') AS "CAR ID",
-  b_requests.data->>'requestor' as "Operator",  
-  b_requests.data->>'tenant_id' as "Tenant ID",
-  b_requests.data->>'tenant_configuration' as "Configuration",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '19' AND option_id = b_requests.data->>'tenant_configuration'), '') as "Configuration",
-  b_requests.data->'nominal_coordinates'->>'x' as "Nominal coordinates - Latitude - WGS 84",
-  b_requests.data->'nominal_coordinates'->>'y' as "Nominal coordinates - Longitude - WGS 84",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 52 AND value_id = b_requests.data->>'request_type'), '') as "Request type",
-  b_requests.data->>'program_id_number' as "Program ID",
-  b_requests.data->>'program_id' as "Program",  
-  b_requests.data->>'sow' as "SOW",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 76 AND value_id = b_requests.data->>'sow'), '') as "SOW",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'request_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Request date",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'requested_rfi','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Expected RFI",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'date_of_completion','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Date of completion",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'rinternal_rfi','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Internal RFI",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'expected_end_work','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Expected end work",
-  b_requests.data->>'status' as "CR status",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '12' AND option_id = b_requests.data->>'status'), '') as "CR status",
-  b_requests.data->'project_id' ->>'prefix' as "Prj ID - prefix",
-  b_requests.data->'project_id' ->>'number' as "Prj ID - number",
-  CONCAT(b_requests.data->'project_id' ->>'prefix', '-',b_requests.data->'project_id' ->>'number') AS "Prj ID",  
-  b_requests.data->>'final_validation' as "Final validation",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '13' AND option_id = b_requests.data->>'final_validation'), '') as "Final validation",
-  b_requests.data->>'comment_final' as "Comment",  
-  b_requests.data->>'cost' as "Cost",
-  b_requests.data->>'cost_share_scheme' as "RTR-STR Cost Share Scheme",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '52' AND option_id = b_requests.data->>'cost_share_scheme'), '') as "RTR-STR Cost Share Scheme",
-  b_requests.data->>'final_validation_b2s' as "Decision",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '31' AND option_id = b_requests.data->>'need_rtr'), '') as "Need RTR",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '32' AND option_id = b_requests.data->>'need_str'), '') as "Need STR",
-  b_requests.data->>'need_structural_calculation' as "Need structural analysis",
-  b_requests.data->>'tower_extension_required' as "Tower extension required",
-  b_requests.data->>'need_power_upgrade' as "Need power upgrade",
-  b_requests.data->>'additional_average_power_consumption' as "Additional Average power consumption",
-  b_requests.data->>'additional_peak_power_consumption' as "Additional Peak power consumption",
-  b_requests.data->>'total_average_power_consumption' as "Total Average power consumption",
-  b_requests.data->>'total_peak_power_consumption' as "Total Peak power consumption",
-  b_requests.data->>'search_radius' as "Search radius",
-  b_requests.data->>'location_classification' as "Location Classification",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 76 AND value_id = b_requests.data->>'location_classification'), '') as "Location Classification",
-  b_requests.data->>'planned_tower_height' as "Customer Planned Tower Height",
-  b_requests.data->>'nominal_objective' as "Nominal Objective",
-  b_requests.data->>'zone_type' as "Zone Type",
-  b_requests.data->>'critical_site' as "Critical Site",
-  b_requests.data->>'decision_rtr' as "Decision RTR",
-  b_requests.data->>'decision_str' as "Decision STR",
-  b_requests.data->>'author' as "Request by",
-  b_requests.data->>'request_id' as "Space management and Structural"
-  FROM forms_data as b_requests
- WHERE b_requests.form_id in (37) AND 
-  b_requests.enabled  = true AND 
- ( b_requests.embedded = false OR b_requests.embedded is null)
-;
-
-#__________________
-#CR Approval matrix
-
-table = "cr approval matrix"
-
-select
-  b_approval.data->'request_id' ->>'prefix' as "CAR ID - prefix",
-  b_approval.data->'request_id' ->>'number' as "CAR ID - number",
-  CONCAT(b_approval.data->'request_id' ->>'prefix', '-',b_approval.data->'request_id' ->>'number') AS "CAR ID",
-  b_approval.data->>'approved_by' as "Team",
-  b_approval.data->>'team' as "Team1",
-  b_approval.data->>'approving' as "Approving",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 22 AND field_id = '2' AND option_id = b_approval.data->>'decision'), '') as "Decision",
-  b_approval.data->>'comment' as "Comment"
-  FROM forms_data as b_approval 
- WHERE b_approval.form_id in (22) AND 
-  b_approval.enabled  = true AND 
- ( b_approval.embedded = false OR b_approval.embedded is null)
-;
-
+%Field_data
 
 
 
@@ -260,5 +140,4 @@ Select b_sites.data->>'site_id_text' as "Site ID" ,
   b_sites.enabled  = true AND 
  ( b_sites.embedded = false OR b_sites.embedded is null) AND 
  ((b_sites.data ->>'site_id_text') IN ('1-01-17006-005'))
-;
  
