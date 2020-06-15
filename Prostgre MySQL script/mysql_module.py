@@ -68,6 +68,29 @@ def insertData (connection,myTable,myColumns,myData):
 
     print(mycursor.rowcount, "records inserted in ",myTable)
 
+#_____________
+#truncate data
+
+def truncateData (connection,myTable,myColumns):
+
+    """
+    mydb = mysql.connector.connect(
+        host="192.168.1.153",
+        user="admin",
+        passwd="P@ssw0rd",
+        database="00_cos_warehouse"
+        )
+    """    
+    mycursor = connection.cursor()
+    
+    sql = "TRUNCATE TABLE {}"
+    sql = sql.format(myTable)
+
+    mycursor.execute(sql)
+
+    print("Table "+ myTable +" truncated")
+
+
 #__________
 #Drop table
 

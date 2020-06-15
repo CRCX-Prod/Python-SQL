@@ -1,72 +1,6 @@
-**Original**
-
-Select b_sites.id AS id,  b_sites.data->>'site_id_text' as "Site ID" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 104 AND value_id = b_sites.data->>'entity'), '') as "Entity" , 
-  b_sites.data->>'zone_team' as "Zone" , 
-  
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_sites.data->>'site_built','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Site Built" ,
-      
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(r_tenant_contain_location_tenant.data->>'rfi_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "RFI" ,
-  
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(r_tenant_contain_location_tenant.data->>'on_air_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "On air" ,
-  
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 113 AND value_id = r_tenant_contain_location_tenant.data->>'power_type'), '') as "Billable power" ,
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 200 AND field_id = '26' AND option_id = r_tenant_contain_location_tenant.data->>'tenant_configuration'), '') as "Tenant configuration" ,
-  r_tenant_contain_location_tenant.data->>'tenant_site_id' as "Tenant ID" ,
-  
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(r_tenant_link_to_lease_site_lease.data->>'boa_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "BOA" ,
-  
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(r_tenant_link_to_lease_site_lease.data->>'eoa_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "EOA" ,
-  
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(r_tenant_link_to_lease_site_lease.data->>'cut_over','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Cut Over" ,
-  
-  r_tenant_link_to_lease_site_lease.data->>'tower' as "Tower" ,
-  r_tenant_link_to_lease_site_lease.data->>'power' as "Power" ,
-  
- TO_CHAR(TO_TIMESTAMP(( NULLIF(r_tenant_link_to_lease_site_lease.data->>'termination_notice','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Termination notice"  
- FROM forms_data as b_sites
- left join forms_relations_data as r0 on r0.relation_id = 1075 and (r0.source_id = b_sites.id or r0.target_id = b_sites.id ) and r0.enabled = true 
- left join forms_data as r_tenant_contain_location_tenant on (r_tenant_contain_location_tenant.id = r0.source_id or r_tenant_contain_location_tenant.id =r0.target_id ) and r_tenant_contain_location_tenant.form_id = 200 
- left join forms_relations_data as r1 on r1.relation_id = 1077 and (r1.source_id = r_tenant_contain_location_tenant.id or r1.target_id = r_tenant_contain_location_tenant.id ) and r1.enabled = true 
- left join forms_data as r_tenant_link_to_lease_site_lease on (r_tenant_link_to_lease_site_lease.id = r1.source_id or r_tenant_link_to_lease_site_lease.id =r1.target_id ) and r_tenant_link_to_lease_site_lease.form_id = 190 
- WHERE b_sites.form_id in (14) AND b_sites.enabled  = true AND ( b_sites.embedded = false OR b_sites.embedded is null)  
-;
-
-Test Site only
-
-
-Select b_sites.id AS id,  b_sites.data->>'site_id_text' as "Site ID" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 104 AND value_id = b_sites.data->>'entity'), '') as "Entity" , 
-  b_sites.data->>'zone_team' as "Zone" , 
-  
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_sites.data->>'site_built','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Site Built" ,
-         
- FROM forms_data as b_sites
- left join forms_relations_data as r0 on r0.relation_id = 1075 and (r0.source_id = b_sites.id or r0.target_id = b_sites.id ) and r0.enabled = true 
- left join forms_data as r_tenant_contain_location_tenant on (r_tenant_contain_location_tenant.id = r0.source_id or r_tenant_contain_location_tenant.id =r0.target_id ) and r_tenant_contain_location_tenant.form_id = 200 
- left join forms_relations_data as r1 on r1.relation_id = 1077 and (r1.source_id = r_tenant_contain_location_tenant.id or r1.target_id = r_tenant_contain_location_tenant.id ) and r1.enabled = true 
- left join forms_data as r_tenant_link_to_lease_site_lease on (r_tenant_link_to_lease_site_lease.id = r1.source_id or r_tenant_link_to_lease_site_lease.id =r1.target_id ) and r_tenant_link_to_lease_site_lease.form_id = 190 
- WHERE b_sites.form_id in (14) AND b_sites.enabled  = true AND ( b_sites.embedded = false OR b_sites.embedded is null)  
-;
-
-
-Sites query working
-
-Select b_sites.id AS id,  b_sites.data->>'site_id_text' as "Site ID" ,  
-    COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 104 AND value_id = b_sites.data->>'entity'), '') as "Entity" ,
-    TO_CHAR(TO_TIMESTAMP(( NULLIF(b_sites.data->>'site_built','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Site ready date" 
-
- FROM forms_data as b_sites 
- WHERE b_sites.form_id in (14) AND 
-  b_sites.enabled  = true AND 
- ( b_sites.embedded = false OR b_sites.embedded is null) AND 
- ((b_sites.data ->>'entity') IN ('2'))
-;
-
-table = table_test
-
 %___________________________________________________________________________
 %sites
+%___________________________________________________________________________
 
 table = "sites"
 
@@ -109,6 +43,7 @@ Select
 
 %___________________________________________________________________________
 %tenants
+%___________________________________________________________________________
 
 table = "tenants"
 
@@ -136,6 +71,7 @@ Select
 
 %___________________________________________________________________________
 %Teams
+%___________________________________________________________________________
 
 table = "teams"
 
@@ -150,6 +86,7 @@ select
 
 %___________________________________________________________________________
 %Users
+%___________________________________________________________________________
 
 table = "users"
 
@@ -166,6 +103,7 @@ select
 
 %___________________________________________________________________________
 #Customer requests
+%___________________________________________________________________________
 
 table = "customer requests"
 
@@ -228,8 +166,9 @@ select
  ( b_requests.embedded = false OR b_requests.embedded is null)
 ;
 
-#__________________
+%___________________________________________________________________________
 #CR Approval matrix
+%___________________________________________________________________________
 
 table = "cr approval matrix"
 
@@ -247,18 +186,3 @@ select
   b_approval.enabled  = true AND 
  ( b_approval.embedded = false OR b_approval.embedded is null)
 ;
-
-
-
-
-%Test Query for Python
-
-Select b_sites.data->>'site_id_text' as "Site ID" ,  
- COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_sites.data->>'entity'), '') as "Entity"
- FROM forms_data as b_sites 
- WHERE b_sites.form_id in (97) AND 
-  b_sites.enabled  = true AND 
- ( b_sites.embedded = false OR b_sites.embedded is null) AND 
- ((b_sites.data ->>'site_id_text') IN ('1-01-17006-005'))
-;
- 

@@ -9,6 +9,8 @@ docker rename upbeat_curran python_ubuntu
 docker start python_ubuntu
 docker exec -it python_ubuntu bash
 
+docker commit python_ubuntu cricheux/python-sql:0.1_2020-06-08
+
 #______________
 #install python
 
@@ -29,10 +31,12 @@ pip3 install --upgrade pip
 
 apt update
 apt install cron
+sudo apt-get install gnome-schedule
 systemctl enable cron
+pip install python-crontab
 
 
-
+crontab -e
 
 #working
 pip install psycopg2-binary
