@@ -63,7 +63,7 @@ def insertData (connection,myTable,myColumns,myData):
     sql = "INSERT INTO {} {} VALUES {}"
     sql = sql.format(myTable,myColumnsString,myIncr)
 
-    mycursor.execute(sql, myData)
+    mycursor.executemany(sql, myData)
     connection.commit()
 
     print(mycursor.rowcount, "records inserted in ",myTable)

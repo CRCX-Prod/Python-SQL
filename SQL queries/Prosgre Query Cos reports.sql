@@ -92,6 +92,7 @@ table = "users"
 
 select
   b_teams.data->>'username' as "system_name",
+  CONCAT('["',b_teams.data->>'username','"]') AS "system_name2",
   b_teams.data->>'loginName' as "Login name",
   b_teams.data->>'firstname' as "First name",
   b_teams.data->>'lastname' as "Last name"
@@ -114,30 +115,25 @@ select
   CONCAT(b_requests.data->'request_id' ->>'prefix', '-',b_requests.data->'request_id' ->>'number') AS "CAR ID",
   b_requests.data->>'requestor' as "Operator",  
   b_requests.data->>'tenant_id' as "Tenant ID",
-  b_requests.data->>'tenant_configuration' as "Configuration",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '19' AND option_id = b_requests.data->>'tenant_configuration'), '') as "Configuration",
   b_requests.data->'nominal_coordinates'->>'x' as "Nominal coordinates - Latitude - WGS 84",
   b_requests.data->'nominal_coordinates'->>'y' as "Nominal coordinates - Longitude - WGS 84",
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 52 AND value_id = b_requests.data->>'request_type'), '') as "Request type",
   b_requests.data->>'program_id_number' as "Program ID",
-  b_requests.data->>'program_id' as "Program",  
-  b_requests.data->>'sow' as "SOW",
+  b_requests.data->>'program_id' as "Program", 
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 76 AND value_id = b_requests.data->>'sow'), '') as "SOW",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'request_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Request date",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'requested_rfi','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Expected RFI",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'date_of_completion','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Date of completion",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'rinternal_rfi','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Internal RFI",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'expected_end_work','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Expected end work",
-  b_requests.data->>'status' as "CR status",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '12' AND option_id = b_requests.data->>'status'), '') as "CR status",
   b_requests.data->'project_id' ->>'prefix' as "Prj ID - prefix",
   b_requests.data->'project_id' ->>'number' as "Prj ID - number",
   CONCAT(b_requests.data->'project_id' ->>'prefix', '-',b_requests.data->'project_id' ->>'number') AS "Prj ID",  
-  b_requests.data->>'final_validation' as "Final validation",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '13' AND option_id = b_requests.data->>'final_validation'), '') as "Final validation",
   b_requests.data->>'comment_final' as "Comment",  
   b_requests.data->>'cost' as "Cost",
-  b_requests.data->>'cost_share_scheme' as "RTR-STR Cost Share Scheme",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '52' AND option_id = b_requests.data->>'cost_share_scheme'), '') as "RTR-STR Cost Share Scheme",
   b_requests.data->>'final_validation_b2s' as "Decision",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '31' AND option_id = b_requests.data->>'need_rtr'), '') as "Need RTR",
@@ -150,7 +146,6 @@ select
   b_requests.data->>'total_average_power_consumption' as "Total Average power consumption",
   b_requests.data->>'total_peak_power_consumption' as "Total Peak power consumption",
   b_requests.data->>'search_radius' as "Search radius",
-  b_requests.data->>'location_classification' as "Location Classification",
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 76 AND value_id = b_requests.data->>'location_classification'), '') as "Location Classification",
   b_requests.data->>'planned_tower_height' as "Customer Planned Tower Height",
   b_requests.data->>'nominal_objective' as "Nominal Objective",
@@ -170,7 +165,7 @@ select
 #CR Approval matrix
 %___________________________________________________________________________
 
-table = "cr approval matrix"
+table = "cr_approval_matrix"
 
 select
   b_approval.data->'request_id' ->>'prefix' as "CAR ID - prefix",
@@ -186,3 +181,20 @@ select
   b_approval.enabled  = true AND 
  ( b_approval.embedded = false OR b_approval.embedded is null)
 ;
+
+%___________________________________________________________________________
+#CR Comments
+%___________________________________________________________________________
+
+table = "cos_report_cr_comments"
+
+select  
+  CASE WHEN (b_customer_request.data->>'request_id' != '')  THEN (  CASE  WHEN (b_customer_request.data->'request_id'->>'draft' = 'true')  THEN (b_customer_request.data->'request_id'->>'draft_number')  WHEN (b_customer_request.data->'request_id'->>'number' != '')  THEN ( CONCAT(  CASE  WHEN ( b_customer_request.data->'request_id'->>'prefix' != '')  THEN ( b_customer_request.data->'request_id'->>'prefix' )  ELSE '' END  , '-',  CASE  WHEN ( LENGTH(b_customer_request.data->'request_id'->>'number') > 4)  THEN ( b_customer_request.data->'request_id'->>'number')  ELSE ( LPAD(b_customer_request.data->'request_id'->>'number', 4, '0') )  END  ) )  ELSE '' END  ) ELSE '' END  AS "CAR ID" ,
+  r_cr_contain_comment_remark.data->>'internal_detail_of_issue' as "Comment",
+  CASE WHEN (r_cr_contain_comment_remark.data->>'remark_id' != '')  THEN (  CASE  WHEN (r_cr_contain_comment_remark.data->'remark_id'->>'draft' = 'true')  THEN (r_cr_contain_comment_remark.data->'remark_id'->>'draft_number')  WHEN (r_cr_contain_comment_remark.data->'remark_id'->>'number' != '')  THEN ( CONCAT(  CASE  WHEN ( r_cr_contain_comment_remark.data->'remark_id'->>'prefix' != '')  THEN ( r_cr_contain_comment_remark.data->'remark_id'->>'prefix' )  ELSE '' END  , '-',  CASE  WHEN ( LENGTH(r_cr_contain_comment_remark.data->'remark_id'->>'number') > 4)  THEN ( r_cr_contain_comment_remark.data->'remark_id'->>'number')  ELSE ( LPAD(r_cr_contain_comment_remark.data->'remark_id'->>'number', 4, '0') )  END  ) )  ELSE '' END  ) ELSE '' END  AS "Comment ID" , 
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(r_cr_contain_comment_remark.data->>'date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Date",
+  (select ((d.data ->> 'firstname'::text) || ' '::text || (d.data ->> 'lastname'::text)) from forms_data d where d.enabled and d.form_id = 1 and d.id = (r_cr_contain_comment_remark.data->>'raised_by')::text) AS "Raised by"
+ FROM forms_data as b_customer_request 
+ left join forms_relations_data as r0 on r0.relation_id = 67 and (r0.source_id = b_customer_request.id or r0.target_id = b_customer_request.id ) and r0.enabled = true 
+ left join forms_data as r_cr_contain_comment_remark on (r_cr_contain_comment_remark.id = r0.source_id or r_cr_contain_comment_remark.id =r0.target_id ) and r_cr_contain_comment_remark.form_id = 80 
+ WHERE b_customer_request.form_id in (37) AND b_customer_request.enabled  = true AND ( b_customer_request.embedded = false OR b_customer_request.embedded is null);

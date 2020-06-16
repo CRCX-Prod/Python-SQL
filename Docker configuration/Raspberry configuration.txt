@@ -1,0 +1,37 @@
+user:       pi
+password:   P@ssw0rd
+
+Setup SSH
+sudo raspi-config
+
+
+#Install python
+
+
+
+#Install pip3
+
+pip3 install --upgrade pip
+
+#Install Postgre connector
+
+sudo apt-get install libpq-dev
+pip install psycopg2
+
+
+#pip mySQL not working
+
+pip3 install mysql
+pip install mysql-connector-python
+
+
+sudo apt-get -y install python-mysql.connector
+pip install mysql-python
+
+#Install crontab
+
+apt update
+apt install cron
+sudo apt-get install gnome-schedule
+systemctl enable cron
+pip install python-crontab

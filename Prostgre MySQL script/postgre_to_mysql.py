@@ -12,7 +12,7 @@ def insertFromQuery (postConn,myConn,tableName,postQuery):
     mysql_module.insertData(myConn,tableName,postColumns,postData)
 
 #____________________________________________________________
-#drop, create and insert in a MySQL table from a PostgreQuery
+#truncate and insert in a MySQL table from a PostgreQuery
 
 def repopulateFromQuery (postConn,myConn,tableName,postQuery):
     
@@ -20,6 +20,20 @@ def repopulateFromQuery (postConn,myConn,tableName,postQuery):
     postData = postgre_module.getData(postConn,postQuery)
 
     mysql_module.truncateData(myConn,tableName,postColumns)
+    mysql_module.insertData(myConn,tableName,postColumns,postData)
+
+
+#____________________________________________________________
+#drop, create and insert in a MySQL table from a PostgreQuery
+
+def rebuildFromQuery (postConn,myConn,tableName,postQuery):
+    
+    postColumns = postgre_module.getColumns(postConn,postQuery)
+    postData = postgre_module.getData(postConn,postQuery)
+
+    mysql_module.dropTable(myConn,tableName)
+    mysql_module.createTable(myConn,tableName,postColumns)
+#    mysql_module.truncateData(myConn,tableName,postColumns)
     mysql_module.insertData(myConn,tableName,postColumns,postData)
 
 #______________________________________________________
