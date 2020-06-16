@@ -77,6 +77,7 @@ table = "teams"
 
 select
   b_teams.data->>'system_name' as "system_name",
+  CONCAT('["',b_teams.data->>'system_name','"]') AS "system_name2",
   b_teams.data->>'team_name' as "Team name"
  FROM forms_data as b_teams 
  WHERE b_teams.form_id in (4) AND 
