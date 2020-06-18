@@ -1,5 +1,5 @@
 user:       pi
-password:   P@ssw0rd
+password:   APTowers2020.
 
 Setup SSH
 sudo raspi-config
