@@ -6,7 +6,7 @@ table = "sites"
 
 Select
   b_sites.data->>'site_id_text' as "Site ID" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_sites.data->>'entity'), '') as "Entity" ,
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_sites.data->>'entity'), '') as "Entity",
   b_sites.data->>'zone_team' as "Zone" ,
   b_sites.data->>'anchor_id' as "Anchor ID" ,
   b_sites.data->>'anchor_tenant' as "Anchor operator" ,
@@ -22,7 +22,7 @@ Select
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '103' AND option_id = b_sites.data->>'colocation_potential'), '') as "Colocation potential" ,
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '114' AND option_id = b_sites.data->>'community_status'), '') as "Community status", 
   b_sites.data->>'fdn_stress' as "FDN stress" ,
-  b_sites.data->>'power_configuration' as "Power configuration" ,
+  b_sites.data->>'power_configuration' as "Power configuration",
   b_sites.data->>'twr_stress' as "TWR stress" ,
   b_sites.data->>'region_state' as "Region/State" ,
   b_sites.data->>'division' as "Division" ,
@@ -332,4 +332,43 @@ select b_analysis.data->>'site_id' as "Site ID",
  WHERE b_analysis.form_id in (54) AND 
   b_analysis.enabled  = true AND 
  ( b_analysis.embedded = false OR b_analysis.embedded is null)
+;
+
+
+%___________________________________________________________________________
+#O&M actions
+%___________________________________________________________________________
+
+table = "o_m_actions"
+
+
+
+select 
+  b_actions.data->'action_id' ->>'prefix' as "Action ID - prefix",
+  b_actions.data->'action_id' ->>'number' as "Action ID  - number",
+  b_actions.data->'action_id' ->>'number' as "Action ID",
+  b_actions.data->>'anchor_id' as "Anchor ID",
+  b_actions.data->>'site_id' as "Site ID",
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_actions.data->>'entity'), '') as "Entity",
+  b_actions.data->>'zone' as "Zone",
+  b_actions.data->>'anchor_class' as "Anchor class",
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_actions.data->>'anchor_class'), '') as "Anchor class",
+  b_actions.data->>'power_configuration' as "Power configuration",
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_actions.data->>'anchor_class'), '') as "Power configuration",
+  b_actions.data->>'week' as "Week",
+  b_actions.data->>'open_date' as "Open date",
+  b_actions.data->>'week_raw_sla' as "Week raw SLA",
+  b_actions.data->>'repetitive_outages' as "Repetitive outages",
+  b_actions.data->>'rca' as "RCA",
+  b_actions.data->>'rca_sub_category' as "RCA sub category",
+  b_actions.data->>'rca_summary' as "RCA summary",
+  b_actions.data->>'action_plan' as "Action plan",
+  b_actions.data->>'action_by' as "Action by",
+  b_actions.data->>'action_due' as "Action due",
+  b_actions.data->>'status' as "Status",
+  b_actions.data->>'created_by' as "Created by"
+ FROM forms_data as b_actions
+ WHERE b_actions.form_id in (120) AND 
+  b_actions.enabled  = true AND 
+ ( b_actions.embedded = false OR b_actions.embedded is null)
 ;

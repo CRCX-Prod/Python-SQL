@@ -1,6 +1,12 @@
 import psycopg2
 import mysql.connector
 import postgre_to_mysql
+from datetime import datetime
+
+now = datetime.now()
+
+start_time = now.strftime("20%y-%m-%d %H:%M:%S")
+print("Start at ", start_time)
 
 #__________________
 #Postgre Connection
@@ -167,3 +173,19 @@ postQuery = """select b_analysis.data->>'site_id' as "Site ID",
 #postgre_to_mysql.rebuildFromQuery(postConn,mysqlConn,table,postQuery)
 #postgre_to_mysql.createFromQuery(postConn,mysqlConn,table,postQuery)
 postgre_to_mysql.repopulateFromQuery(postConn,mysqlConn,table,postQuery)
+
+#__________
+#Record log
+
+now = datetime.now()
+
+end_time = now.strftime("20%y-%m-%d %H:%M:%S")
+print("End at ", end_time)
+
+mycursor = mysqlConn.cursor()
+
+sql = "INSERT INTO 00_log_script (script_name, start, end) VALUES (%s, %s, %s)"
+val = ("structural.py", start_time, end_time)
+mycursor.execute(sql, val)
+
+mysqlConn.commit()
