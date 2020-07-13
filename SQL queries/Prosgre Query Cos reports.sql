@@ -10,8 +10,6 @@ Select
   b_sites.data->>'zone_team' as "Zone" ,
   b_sites.data->>'anchor_id' as "Anchor ID" ,
   b_sites.data->>'anchor_tenant' as "Anchor operator" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 40 AND value_id = b_sites.data->>'typology'), '') as "Site type" ,
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '130' AND option_id = b_sites.data->>'status'), '') as "Site status",  
   b_sites.data->>'tenancy_on_air' as "Tenancy on air" ,
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_sites.data->>'anchor_class'), '') as "Anchor class" ,
   b_sites.data->>'tower_height' as "Height" ,
@@ -22,9 +20,9 @@ Select
   b_sites.data->'coordinates_site'->>'x' as "Latitude",
   b_sites.data->'coordinates_site'->>'y' as "Longitude",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '103' AND option_id = b_sites.data->>'colocation_potential'), '') as "Colocation potential" ,
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '114' AND option_id = b_sites.data->>'community_status'), '') as "Community status",
+  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '114' AND option_id = b_sites.data->>'community_status'), '') as "Community status", 
   b_sites.data->>'fdn_stress' as "FDN stress" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 46 AND value_id = b_sites.data->>'power_configuration'), '') as "Power configuration",
+  b_sites.data->>'power_configuration' as "Power configuration",
   b_sites.data->>'twr_stress' as "TWR stress" ,
   b_sites.data->>'region_state' as "Region/State" ,
   b_sites.data->>'division' as "Division" ,
@@ -36,7 +34,7 @@ Select
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_sites.data->>'ground_lease_terminated','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Ground lease terminated" ,
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_sites.data->>'site_dismantled','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Site end date" ,
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 8 AND value_id = b_sites.data->>'aera_type'), '') as "Area type"
-  FROM forms_data as b_sites 
+ FROM forms_data as b_sites 
  WHERE b_sites.form_id in (90) AND 
   b_sites.enabled  = true AND 
  ( b_sites.embedded = false OR b_sites.embedded is null) AND 
@@ -157,9 +155,6 @@ select
   b_requests.data->>'decision_rtr' as "Decision RTR",
   b_requests.data->>'decision_str' as "Decision STR",
   b_requests.data->>'author' as "Request by",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 85 AND value_id = b_requests.data->>'cr_activity'), '') as "CR activity",
-  b_requests.data->>'application_sow' as "Application SOW",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 28 AND value_id = b_requests.data->>'application_revision'), '') as "Application revision",  
   b_requests.data->>'request_id' as "Space management and Structural"
   FROM forms_data as b_requests
  WHERE b_requests.form_id in (37) AND 
@@ -181,8 +176,7 @@ select
   b_approval.data->>'team' as "Team1",
   b_approval.data->>'approving' as "Approving",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 22 AND field_id = '2' AND option_id = b_approval.data->>'decision'), '') as "Decision",
-  b_approval.data->>'comment' as "Comment",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_approval.data->>'date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Date"
+  b_approval.data->>'comment' as "Comment"
   FROM forms_data as b_approval 
  WHERE b_approval.form_id in (22) AND 
   b_approval.enabled  = true AND 
@@ -347,109 +341,34 @@ select b_analysis.data->>'site_id' as "Site ID",
 
 table = "o_m_actions"
 
+
+
 select 
   b_actions.data->'action_id' ->>'prefix' as "Action ID - prefix",
   b_actions.data->'action_id' ->>'number' as "Action ID  - number",
   b_actions.data->'action_id' ->>'number' as "Action ID",
   b_actions.data->>'anchor_id' as "Anchor ID",
-  b_actions.data->>'site_id_text' as "Site ID",
+  b_actions.data->>'site_id' as "Site ID",
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_actions.data->>'entity'), '') as "Entity",
-  b_actions.data->>'zone_team' as "Zone",
+  b_actions.data->>'zone' as "Zone",
+  b_actions.data->>'anchor_class' as "Anchor class",
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_actions.data->>'anchor_class'), '') as "Anchor class",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 46 AND value_id = b_actions.data->>'power_configuration'), '') as "Power configuration",
+  b_actions.data->>'power_configuration' as "Power configuration",
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_actions.data->>'anchor_class'), '') as "Power configuration",
   b_actions.data->>'week' as "Week",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_actions.data->>'date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Open date",
+  b_actions.data->>'open_date' as "Open date",
   b_actions.data->>'week_raw_sla' as "Week raw SLA",
   b_actions.data->>'repetitive_outages' as "Repetitive outages",
-  b_actions.data->>'most_frequent_rca' as "RCA",
+  b_actions.data->>'rca' as "RCA",
   b_actions.data->>'rca_sub_category' as "RCA sub category",
   b_actions.data->>'rca_summary' as "RCA summary",
   b_actions.data->>'action_plan' as "Action plan",
   b_actions.data->>'action_by' as "Action by",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_actions.data->>'action_due','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Action due",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 120 AND field_id = '13' AND option_id = b_actions.data->>'status'), '') as "Status",
+  b_actions.data->>'action_due' as "Action due",
+  b_actions.data->>'status' as "Status",
   b_actions.data->>'created_by' as "Created by"
  FROM forms_data as b_actions
  WHERE b_actions.form_id in (120) AND 
   b_actions.enabled  = true AND 
  ( b_actions.embedded = false OR b_actions.embedded is null)
-;
-
-
-%___________________________________________________________________________
-#Community issues
-%___________________________________________________________________________
-
-table = "community_issues"
-
-select
-  b_community.data->>'site_id' as "Site ID",
-  b_community.data->'issue_id' ->>'prefix' as "Issue ID - prefix",
-  b_community.data->'issue_id' ->>'number' as "Issue ID  - number",
-  CONCAT(b_community.data->'issue_id' ->>'prefix', '-',b_community.data->'issue_id' ->>'number') AS "Issue ID",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_community.data->>'open_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Open date",
-  (select ((d.data ->> 'firstname'::text) || ' '::text || (d.data ->> 'lastname'::text)) from forms_data d where d.enabled and d.form_id = 1 and d.id = (b_community.data->>'opened_by')::text) AS "Opened by",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 37 AND value_id = b_community.data->>'category'), '') as "Category",
-  b_community.data->>'issue_description' as "Issue description",
-  b_community.data->>'resolution_cost' as "Resolution cost",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 23 AND value_id = b_community.data->>'currency'), '') as "Currency",
-  b_community.data->>'site_down' as "Site down",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_community.data->>'closed_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Closed date",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_community.data->>'ptd_involved','') )::bigint/1000) , 'YYYY-MM-DD')::text as "PTD involved",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_community.data->>'regional_government_involved','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Regional government involved",
-  b_community.data->>'address' as "Address",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 50 AND field_id = '12' AND option_id = b_community.data->>'status'), '') as "Status"
- FROM forms_data as b_community
- WHERE b_community.form_id in (50) AND 
-  b_community.enabled  = true AND 
- ( b_community.embedded = false OR b_community.embedded is null)
-;
-
-
-%___________________________________________________________________________
-#Comments
-%___________________________________________________________________________
-
-table = "comments"
-
-select
-  b_comment.data->>'site_id' as "Site ID",
-  b_comment.data->'remark_id' ->>'prefix' as "Comment ID - prefix",
-  b_comment.data->'remark_id' ->>'number' as "Comment ID  - number",
-  CONCAT(b_comment.data->'remark_id' ->>'prefix', '-',b_comment.data->'remark_id' ->>'number') AS "Comment ID",
-  b_comment.data->'issue_id' ->>'prefix' as "Issue ID - prefix",
-  b_comment.data->'issue_id' ->>'number' as "Issue ID  - number",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_comment.data->>'date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Date",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 37 AND value_id = b_comment.data->>'category'), '') as "Category",
-  b_comment.data->>'internal_detail_of_issue' as "Comment",
-  (select ((d.data ->> 'firstname'::text) || ' '::text || (d.data ->> 'lastname'::text)) from forms_data d where d.enabled and d.form_id = 1 and d.id = (b_comment.data->>'raised_by')::text) AS "Raised by"
- FROM forms_data as b_comment 
-  WHERE b_comment.form_id in (80) AND 
-  b_comment.enabled  = true AND 
- ( b_comment.embedded = false OR b_comment.embedded is null)
-;
-
-%___________________________________________________________________________
-#Restrictions
-%___________________________________________________________________________
-
-table = "restrictions"
-
-select
-  b_restriction.data->>'site_pat' as "Site ID",
-  b_restriction.data->'restriction_id' ->>'prefix' as "Restriction ID - prefix",
-  b_restriction.data->'restriction_id' ->>'number' as "Restriction  ID  - number",
-  b_restriction.data->'restriction_id' ->>'number' as "Restriction  ID",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 83 AND field_id = '4' AND option_id = b_restriction.data->>'restriction_type'), '') as "Restriction type",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 83 AND field_id = '13' AND option_id = b_restriction.data->>'restriction_status'), '') as "Restriction status",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_restriction.data->>'restriction_implementation_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Restriction implementation date",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_restriction.data->>'restriction_removed','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Restriction removed",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 83 AND field_id = '10' AND option_id = b_restriction.data->>'can_dg_be_used_if_grid'), '') as "Can DG be used if Grid is Down",
-  b_restriction.data->>'restriction_start_time' as "Restriction start time",  
-  b_restriction.data->>'restriction_end_time' as "Restriction end time",
-  b_restriction.data->>'restriction_duration' as "Restriction duration"
- FROM forms_data as b_restriction 
-  WHERE b_restriction.form_id in (83) AND 
-  b_restriction.enabled  = true AND 
- ( b_restriction.embedded = false OR b_restriction.embedded is null)
 ;

@@ -36,12 +36,10 @@ table = "sites"
 
 postQuery = """Select
   b_sites.data->>'site_id_text' as "Site ID" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_sites.data->>'entity'), '') as "Entity",
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_sites.data->>'entity'), '') as "Entity" ,
   b_sites.data->>'zone_team' as "Zone" ,
   b_sites.data->>'anchor_id' as "Anchor ID" ,
   b_sites.data->>'anchor_tenant' as "Anchor operator" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 40 AND value_id = b_sites.data->>'typology'), '') as "Site type" ,
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '130' AND option_id = b_sites.data->>'status'), '') as "Site status",  
   b_sites.data->>'tenancy_on_air' as "Tenancy on air" ,
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_sites.data->>'anchor_class'), '') as "Anchor class" ,
   b_sites.data->>'tower_height' as "Height" ,
@@ -52,9 +50,9 @@ postQuery = """Select
   b_sites.data->'coordinates_site'->>'x' as "Latitude",
   b_sites.data->'coordinates_site'->>'y' as "Longitude",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '103' AND option_id = b_sites.data->>'colocation_potential'), '') as "Colocation potential" ,
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '114' AND option_id = b_sites.data->>'community_status'), '') as "Community status",
+  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '114' AND option_id = b_sites.data->>'community_status'), '') as "Community status", 
   b_sites.data->>'fdn_stress' as "FDN stress" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 46 AND value_id = b_sites.data->>'power_configuration'), '') as "Power configuration",
+  b_sites.data->>'power_configuration' as "Power configuration" ,
   b_sites.data->>'twr_stress' as "TWR stress" ,
   b_sites.data->>'region_state' as "Region/State" ,
   b_sites.data->>'division' as "Division" ,
@@ -66,7 +64,7 @@ postQuery = """Select
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_sites.data->>'ground_lease_terminated','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Ground lease terminated" ,
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_sites.data->>'site_dismantled','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Site end date" ,
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 8 AND value_id = b_sites.data->>'aera_type'), '') as "Area type"
-  FROM forms_data as b_sites 
+ FROM forms_data as b_sites 
  WHERE b_sites.form_id in (90) AND 
   b_sites.enabled  = true AND 
  ( b_sites.embedded = false OR b_sites.embedded is null)
@@ -156,11 +154,6 @@ postQuery = """select
   b_requests.data->>'decision_rtr' as "Decision RTR",
   b_requests.data->>'decision_str' as "Decision STR",
   b_requests.data->>'author' as "Request by",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 85 AND value_id = b_requests.data->>'cr_activity'), '') as "CR activity",
-  b_requests.data->>'application_sow' as "Application SOW",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 28 AND value_id = b_requests.data->>'application_revision'), '') as "Application revision",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'power_forecast','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Power forecast",
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 87 AND value_id = b_requests.data->>'power_scope_of_work'), '') as "Power scope of work",
   b_requests.data->>'request_id' as "Space management and Structural"
   FROM forms_data as b_requests
  WHERE b_requests.form_id in (37) AND 
@@ -217,8 +210,7 @@ postQuery = """select
   b_approval.data->>'team' as "Team1",
   b_approval.data->>'approving' as "Approving",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 22 AND field_id = '2' AND option_id = b_approval.data->>'decision'), '') as "Decision",
-  b_approval.data->>'comment' as "Comment",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_approval.data->>'date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Date"
+  b_approval.data->>'comment' as "Comment"
   FROM forms_data as b_approval 
  WHERE b_approval.form_id in (22) AND 
   b_approval.enabled  = true AND 
