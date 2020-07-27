@@ -43,7 +43,9 @@ postQuery = """Select
   b_sites.data->>'tenancy_on_air' as "Tenancy on air" ,
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_sites.data->>'anchor_class'), '') as "Anchor class" ,
   b_sites.data->>'tower_height' as "Height" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 80 AND value_id = b_sites.data->>'site_category'), '') as "Site category" , 
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 80 AND value_id = b_sites.data->>'site_category'), '') as "Site category" ,
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 40 AND value_id = b_sites.data->>'typology'), '') as "Site type" ,
+  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '130' AND option_id = b_sites.data->>'status'), '') as "Site status",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '134' AND option_id = b_sites.data->>'asset_status'), '') as "Asset status",
   b_sites.data->>'site_notes' as "Site notes" ,
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '92' AND option_id = b_sites.data->>'site_tier'), '') as "Site tier",
@@ -52,7 +54,7 @@ postQuery = """Select
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '103' AND option_id = b_sites.data->>'colocation_potential'), '') as "Colocation potential" ,
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 90 AND field_id = '114' AND option_id = b_sites.data->>'community_status'), '') as "Community status", 
   b_sites.data->>'fdn_stress' as "FDN stress" ,
-  b_sites.data->>'power_configuration' as "Power configuration" ,
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 46 AND value_id = b_sites.data->>'power_configuration'), '') as "Power configuration" ,
   b_sites.data->>'twr_stress' as "TWR stress" ,
   b_sites.data->>'region_state' as "Region/State" ,
   b_sites.data->>'division' as "Division" ,
@@ -82,7 +84,7 @@ table = "tenants"
 postQuery = """Select
   b_tenants.data->>'tenant_site_id' as "Tenant ID",
   b_tenants.data->>'site_id_text' as "Site ID", 
-  b_tenants.data->>'entity' as "Entity",  
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_tenants.data->>'entity'), '') as "Entity", 
   b_tenants.data->>'operator' as "Tenant",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 97 AND field_id = '15' AND option_id = b_tenants.data->>'tenant_type'), '') as "Tenant type",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 97 AND field_id = '33' AND option_id = b_tenants.data->>'power'), '') as "Power model tenant",
@@ -92,7 +94,12 @@ postQuery = """Select
   b_tenants.data->'coordinates'->>'y' as "Longitude",
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_tenants.data->>'tenant_class'), '') as "Tenant class" ,
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 97 AND field_id = '26' AND option_id = b_tenants.data->>'tenant_configuration'), '') as "Tenant configuration",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 97 AND field_id = '3' AND option_id = b_tenants.data->>'tenant_status'), '') as "Tenant status"
+  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 97 AND field_id = '3' AND option_id = b_tenants.data->>'tenant_status'), '') as "Tenant status",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_tenants.data->>'rfi_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "RFI",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_tenants.data->>'on_air_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "On air",
+  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 97 AND field_id = '48' AND option_id = b_tenants.data->>'termination_category'), '') as "Termination category",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_tenants.data->>'termination_notice_received','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Termination notice received",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_tenants.data->>'termination_completed','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Termination completed"
  FROM forms_data as b_tenants 
  WHERE b_tenants.form_id in (97) AND 
   b_tenants.enabled  = true AND 
