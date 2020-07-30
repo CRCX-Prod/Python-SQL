@@ -1,0 +1,79 @@
+#Install Python
+
+#Install Django
+
+pip install Django==2.0
+
+#Project folder (not done):
+
+##cd /home/user/Projets/
+
+#Commencer projet
+
+django-admin startproject tuto_django
+
+# Structure projet:
+
+tuto_django/
+├── tuto_django
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+└── manage.py
+
+
+nano /tuto_django/manage.py
+
+nano /tuto_django/tuto_django/settings.py
+
+ALLOWED_HOSTS = ['*']
+
+#get Server IP
+docker inspect cranky_franklin
+
+172.17.0.2
+
+python3 tuto_django/manage.py runserver 172.17.0.2:8000
+
+_______________________________________
+Demarrer une application
+_______________________________________
+
+Dans le dossier /tuto_django/
+python3 manage.py startapp blog
+
+tuto_django/
+├── blog
+│   ├── admin.py
+│   ├── apps.py
+│   ├── __init__.py
+│   ├── migrations
+│   │   └── __init__.py
+│   ├── models.py
+│   ├── tests.py
+│   └── views.py
+├── tuto_django
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+└── manage.py
+
+_________________________________________
+In Setings.py, add blog in INSTALLED_APPS
+_________________________________________
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'blog',
+]
+
+___________
+Hello World
+____________

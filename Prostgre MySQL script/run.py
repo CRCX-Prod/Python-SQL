@@ -161,6 +161,7 @@ postQuery = """select
   b_requests.data->>'decision_rtr' as "Decision RTR",
   b_requests.data->>'decision_str' as "Decision STR",
   b_requests.data->>'author' as "Request by",
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 85 AND value_id = b_requests.data->>'cr_activity'), '') as "CR Activity",
   b_requests.data->>'request_id' as "Space management and Structural"
   FROM forms_data as b_requests
  WHERE b_requests.form_id in (37) AND 
