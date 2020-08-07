@@ -76,4 +76,54 @@ INSTALLED_APPS = [
 
 ___________
 Hello World
-____________
+___________
+
+##Dans /blog/view.py, creer une reponse html
+
+
+from django.http import HttpResponse
+from django.shortcuts import render
+
+def home(request):
+    """ Exemple de page non valide au niveau HTML pour que l'exemple soit concis """
+    return HttpResponse("""
+        <h1>Bienvenue sur mon blog !</h1>
+        <p>Les crêpes bretonnes ça tue des mouettes en plein vol !</p>
+    """)
+
+
+
+##Dans tuto_django/tuto_django/urls.py
+
+from django.urls import path
+from blog import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('accueil', views.home),
+]
+_______________________________________
+#Best Practice: creer url.py dans chaque application
+_______________________________________
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('accueil', views.home),
+]
+
+##Dans tuto_django/tuto_django/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),
+]
+
+
+#now url is localhost:8000/blog/accueil
+

@@ -99,6 +99,7 @@ postQuery = """Select
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_tenants.data->>'on_air_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "On air",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 97 AND field_id = '48' AND option_id = b_tenants.data->>'termination_category'), '') as "Termination category",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_tenants.data->>'termination_notice_received','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Termination notice received",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_tenants.data->>'termination_notice_planned_effective','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Termination notice planned effective",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_tenants.data->>'termination_completed','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Termination completed"
  FROM forms_data as b_tenants 
  WHERE b_tenants.form_id in (97) AND 
@@ -218,6 +219,7 @@ postQuery = """select
   b_approval.data->>'team' as "Team1",
   b_approval.data->>'approving' as "Approving",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 22 AND field_id = '2' AND option_id = b_approval.data->>'decision'), '') as "Decision",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_approval.data->>'date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Date",
   b_approval.data->>'comment' as "Comment"
   FROM forms_data as b_approval 
  WHERE b_approval.form_id in (22) AND 
@@ -241,6 +243,29 @@ postQuery = """select
  left join forms_relations_data as r0 on r0.relation_id = 67 and (r0.source_id = b_customer_request.id or r0.target_id = b_customer_request.id ) and r0.enabled = true 
  left join forms_data as r_cr_contain_comment_remark on (r_cr_contain_comment_remark.id = r0.source_id or r_cr_contain_comment_remark.id =r0.target_id ) and r_cr_contain_comment_remark.form_id = 80 
  WHERE b_customer_request.form_id in (37) AND b_customer_request.enabled  = true AND ( b_customer_request.embedded = false OR b_customer_request.embedded is null)
+ """
+
+#postgre_to_mysql.rebuildFromQuery(postConn,mysqlConn,table,postQuery)
+#postgre_to_mysql.createFromQuery(postConn,mysqlConn,table,postQuery)
+postgre_to_mysql.repopulateFromQuery(postConn,mysqlConn,table,postQuery)
+
+#___________
+#Update Location
+
+table = "locations"
+
+postQuery = """select
+  b_locations.data->'candidate_id' ->>'prefix' as "location ID - prefix",
+  b_locations.data->'candidate_id' ->>'number' as "location ID - number",
+  CONCAT(b_locations.data->'candidate_id' ->>'prefix', '-',b_locations.data->'candidate_id' ->>'number') AS "location ID",
+  b_locations.data->>'location_id' as "Site ID" ,
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 40 AND value_id = b_locations.data->>'location_type'), '') as "Site type" ,
+  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 61 AND field_id = '5' AND option_id = b_locations.data->>'candidate'), '') as "Candidate",
+  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 61 AND field_id = '16' AND option_id = b_locations.data->>'status'), '') as "Candidate status"
+ FROM forms_data as b_locations 
+ WHERE b_locations.form_id in (61) AND 
+  b_locations.enabled  = true AND 
+ ( b_locations.embedded = false OR b_locations.embedded is null)
  """
 
 #postgre_to_mysql.rebuildFromQuery(postConn,mysqlConn,table,postQuery)
