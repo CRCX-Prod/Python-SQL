@@ -215,6 +215,7 @@ postQuery = """select
   b_approval.data->'request_id' ->>'prefix' as "CAR ID - prefix",
   b_approval.data->'request_id' ->>'number' as "CAR ID - number",
   CONCAT(b_approval.data->'request_id' ->>'prefix', '-',b_approval.data->'request_id' ->>'number') AS "CAR ID",
+  b_approval.data->>'tenant_site_id' as "Tenant ID for termination",
   b_approval.data->>'approved_by' as "Team",
   b_approval.data->>'team' as "Team1",
   b_approval.data->>'approving' as "Approving",
