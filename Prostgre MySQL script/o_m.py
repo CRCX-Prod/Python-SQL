@@ -40,9 +40,9 @@ postQuery = """select
   b_actions.data->'action_id' ->>'number' as "Action ID  - number",
   b_actions.data->'action_id' ->>'number' as "Action ID",
   b_actions.data->>'anchor_id' as "Anchor ID",
-  b_actions.data->>'site_id' as "Site ID",
+  b_actions.data->>'site_id_text' as "Site ID",
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 32 AND value_id = b_actions.data->>'entity'), '') as "Entity",
-  b_actions.data->>'zone' as "Zone",
+  b_actions.data->>'zone_team' as "Zone",
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_actions.data->>'anchor_class'), '') as "Anchor class",
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_actions.data->>'power_configuration'), '') as "Power configuration",
   b_actions.data->>'week' as "Week",
@@ -68,6 +68,7 @@ postQuery = """select
 #postgre_to_mysql.rebuildFromQuery(postConn,mysqlConn,table,postQuery)
 #postgre_to_mysql.createFromQuery(postConn,mysqlConn,table,postQuery)
 postgre_to_mysql.repopulateFromQuery(postConn,mysqlConn,table,postQuery)
+
 
 #__________
 #Record log

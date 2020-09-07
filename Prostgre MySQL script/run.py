@@ -40,7 +40,7 @@ postQuery = """Select
   b_sites.data->>'zone_team' as "Zone" ,
   b_sites.data->>'anchor_id' as "Anchor ID" ,
   b_sites.data->>'anchor_tenant' as "Anchor operator" ,
-  b_sites.data->>'tenancy_on_air' as "Tenancy on air" ,
+  b_sites.data->>'tenancy_on_air' as "Tenancy" ,
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 63 AND value_id = b_sites.data->>'anchor_class'), '') as "Anchor class" ,
   b_sites.data->>'tower_height' as "Height" ,
   COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 80 AND value_id = b_sites.data->>'site_category'), '') as "Site category" ,
