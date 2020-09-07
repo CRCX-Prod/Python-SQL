@@ -421,3 +421,26 @@ select
   b_actions.enabled  = true AND 
  ( b_actions.embedded = false OR b_actions.embedded is null)
 ;
+
+#___________
+#Update Power load
+
+table = "power_load"
+
+select 
+  b_load.data->'report_id' ->>'prefix' as "Action ID - prefix",
+  b_load.data->'report_id' ->>'number' as "Action ID  - number",
+  b_load.data->'report_id' ->>'number' as "Action ID",
+  b_load.data->>'location_id' as "Site ID",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_load.data->>'report_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Log date",
+  b_load.data->>'report_date' as "report",
+  b_load.data->>'grid_run' as "Grid run",
+  b_load.data->>'generator_run' as "Generator run",
+  b_load.data->>'battery_run' as "Battery run"
+ FROM forms_data as b_load
+ WHERE b_load.form_id in (85) AND 
+  b_load.enabled  = true AND 
+ ( b_load.embedded = false OR b_load.embedded is null)
+   AND 
+ ((TO_CHAR(TO_TIMESTAMP(( NULLIF(b_load.data->>'report_date','') )::bigint/1000) , 'MM')::text) IN ('08'))
+;

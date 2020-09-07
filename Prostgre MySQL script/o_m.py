@@ -13,10 +13,10 @@ print("Start at ", start_time)
 #Postgre Connection
 
 postConn = psycopg2.connect(
-    host="192.168.1.16", 
-    port = 5432, 
-    database="report_db_apollo_towers", 
-    user="datawarehouse", 
+    host="192.168.1.16",
+    port = 5432,
+    database="report_db_apollo_towers",
+    user="datawarehouse",
     password="HPdhyHCYc8SfLY05EZKOSeH1ekoMXgzZuf44d4gP"
     )
 
@@ -68,7 +68,6 @@ postQuery = """select
 #postgre_to_mysql.rebuildFromQuery(postConn,mysqlConn,table,postQuery)
 #postgre_to_mysql.createFromQuery(postConn,mysqlConn,table,postQuery)
 postgre_to_mysql.repopulateFromQuery(postConn,mysqlConn,table,postQuery)
-
 
 #__________
 #Record log
