@@ -60,3 +60,6 @@ python MySQLtest.py
 #supprimer fichier
 rm MySQLtest.py
 
+timedatectl list-timezones
+
+sudo timedatectl set-timezone Asia/Yangon
