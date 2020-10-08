@@ -283,13 +283,16 @@ postQuery = """select
   b_leases.data->'site_lease_id' ->>'prefix' as "Commercial lease ID - prefix",
   b_leases.data->'site_lease_id' ->>'number' as "Commercial lease ID - number",
   CONCAT(b_leases.data->'site_lease_id' ->>'prefix', '-',b_leases.data->'site_lease_id' ->>'number') AS "Commercial lease ID",
-  b_leases.data->>'tenant_id' as "Tenant ID" ,
-  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 40 AND value_id = b_leases.data->>'location_type'), '') as "Site type" ,
+  b_leases.data->>'tenant_id' as "Tenant ID",
+  COALESCE((SELECT value_title FROM cos_mview_terminology_values WHERE id = 40 AND value_id = b_leases.data->>'location_type'), '') as "Site type",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 88 AND field_id = '30' AND option_id = b_leases.data->>'commercial_lease_type'), '') as "Commercial lease type",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 88 AND field_id = '10' AND option_id = b_leases.data->>'lease_status'), '') as "Lease status"
- FROM forms_data as b_leases 
+  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 88 AND field_id = '10' AND option_id = b_leases.data->>'lease_status'), '') as "Lease status",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_leases.data->>'boa_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "BOA",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_leases.data->>'eoa_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "EOA",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_leases.data->>'boa_power','') )::bigint/1000) , 'YYYY-MM-DD')::text as "BOA - Power"
+  FROM forms_data as b_leases
  WHERE b_leases.form_id in (88) AND 
-  b_leases.enabled  = true AND 
+  b_leases.enabled  = true AND
  ( b_leases.embedded = false OR b_leases.embedded is null)
  """
 
