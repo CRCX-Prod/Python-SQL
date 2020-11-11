@@ -24,10 +24,10 @@ postConn = psycopg2.connect(
 #MySQL Connection
 
 mysqlConn = mysql.connector.connect(
-    host="192.168.1.153",
-    user="admin",
-    passwd="P@ssw0rd",
-    database="00_python"
+    host="192.168.1.40",
+    user="script.update",
+    passwd="zy6BjHr4k@sFa",
+    database="cos_python"
     )
 
 #___________
@@ -63,28 +63,6 @@ postQuery = """select
  WHERE b_actions.form_id in (120) AND 
   b_actions.enabled  = true AND 
  ( b_actions.embedded = false OR b_actions.embedded is null)
- """
-
-#postgre_to_mysql.rebuildFromQuery(postConn,mysqlConn,table,postQuery)
-#postgre_to_mysql.createFromQuery(postConn,mysqlConn,table,postQuery)
-postgre_to_mysql.repopulateFromQuery(postConn,mysqlConn,table,postQuery)
-
-#___________
-#Update Power sources
-
-table = "power_sources"
-
-postQuery = """select 
-  b_sources.data->'power_source_id' ->>'prefix' as "Power source ID - prefix",
-  b_sources.data->'power_source_id' ->>'number' as "Power source ID  - number",
-  b_sources.data->'power_source_id' ->>'number' as "Power source ID",
-  b_sources.data->>'anchor_id' as "Anchor ID",
-  b_sources.data->>'site_id_text' as "Site ID",
-  COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 71 AND field_id = '25' AND option_id = b_sources.data->>'source_test'), '') as "Source type"
- FROM forms_data as b_sources
- WHERE b_sources.form_id in (71) AND 
-  b_sources.enabled  = true AND 
- ( b_sources.embedded = false OR b_sources.embedded is null)
  """
 
 #postgre_to_mysql.rebuildFromQuery(postConn,mysqlConn,table,postQuery)

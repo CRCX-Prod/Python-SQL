@@ -1,4 +1,3 @@
-
 # Edit this file to introduce tasks to be run by cron.
 #
 # Each task to run has to be defined through a single line
@@ -23,14 +22,38 @@
 #
 # m h  dom mon dow   command
 
-
+#* * * * * python3 test.py > test.log
 
 #* * * * * echo "BackupTest Successful: $(date)" >> /home/pi/mybackup.log
 
-6 * * * * python3 /home/pi/structural.py > /home/pi/structural.log
 
-5 * * * * python3 /home/pi/run.py > /home/pi/run.log
 
-7 * * * * python3 /home/pi/o_m.py > /home/pi/o_m.log
+#At Myanmar time hourly
 
-8 * * * * python3 /home/pi/communities.py > /home/pi/communities.log
+#6 * * * * python3 structural.py > structural.log
+
+#5 * * * * python3 run.py > run.log
+
+#7 * * * * python3 o_m.py > o_m.log
+
+#8 * * * * python3 communities.py > communities.log
+
+#At Myanmar 3 times per day to 192.168.1.40
+
+6 6,12,18 * * * python3 structural40.py > structural.log
+
+5 6,12,18 * * * python3 run40.py > run.log
+
+7 6,12,18 * * * python3 o_m40.py > o_m.log
+
+8 6,12,18 * * * python3 communities40.py > communities.log
+
+#At Myanmar 3 times per day to 192.168.1.153 (To be removed later)
+
+10 6,12,18 * * * python3 structural.py > structural.log
+
+11 6,12,18 * * * python3 run.py > run.log
+
+12 6,12,18 * * * python3 o_m.py > o_m.log
+
+13 6,12,18 * * * python3 communities.py > communities.log
