@@ -133,7 +133,7 @@ postQuery = """select
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'request_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Request date",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'requested_rfi','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Expected RFI",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'date_of_completion','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Date of completion",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'rinternal_rfi','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Internal RFI",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'internal_rfi','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Internal RFI",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_requests.data->>'expected_end_work','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Expected end work",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 37 AND field_id = '12' AND option_id = b_requests.data->>'status'), '') as "CR status",
   b_requests.data->'project_id' ->>'prefix' as "Prj ID - prefix",
@@ -289,7 +289,8 @@ postQuery = """select
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 88 AND field_id = '10' AND option_id = b_leases.data->>'lease_status'), '') as "Lease status",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_leases.data->>'boa_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "BOA",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_leases.data->>'eoa_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "EOA",
-  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_leases.data->>'boa_power','') )::bigint/1000) , 'YYYY-MM-DD')::text as "BOA - Power"
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_leases.data->>'boa_power','') )::bigint/1000) , 'YYYY-MM-DD')::text as "BOA - Power",
+  TO_CHAR(TO_TIMESTAMP(( NULLIF(b_leases.data->>'eoa_power','') )::bigint/1000) , 'YYYY-MM-DD')::text as "EOA - Power"
   FROM forms_data as b_leases
  WHERE b_leases.form_id in (88) AND 
   b_leases.enabled  = true AND
