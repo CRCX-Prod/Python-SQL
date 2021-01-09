@@ -147,3 +147,25 @@ def createTable (connection,myTable,myColumns):
     mycursor.execute(sql)
     connection.commit()
     print("Table "+ myTable + " created")
+
+#________________________________________
+#Array of columns from a MySQL query
+
+def getColumns (connection,query):
+ 
+    cur = connection.cursor()
+    cur.execute(query)
+ 
+    query_columns = [desc[0] for desc in cur.description]
+    return query_columns
+
+#__________________________________
+#Array of data from a MySQL query
+
+def getData (connection,query):
+ 
+    cur = connection.cursor()
+    cur.execute(query)
+
+    query_results = cur.fetchall()
+    return query_results
