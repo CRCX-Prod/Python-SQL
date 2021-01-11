@@ -35,7 +35,7 @@ mysqlConn = mysql.connector.connect(
 
 table = "service_work_order"
 
-postQuery = """select 
+postQuery = """select
   b_swo.data->'swo_id' as "SWO ID",
   b_swo.data->>'anchor_id' as "Anchor ID",
   b_swo.data->>'site_id_text' as "Site ID",
@@ -50,6 +50,7 @@ postQuery = """select
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 128 AND field_id = '6' AND option_id = b_swo.data->>'priority'), '') as "Priority",  
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_swo.data->>'swo_close_date','') )::bigint/1000) , 'YYYY-MM-DD')::text as "SWO Close date",
   COALESCE((SELECT option_title FROM cos_mview_dropdown_radio_values WHERE form_id = 128 AND field_id = '7' AND option_id = b_swo.data->>'status'), '') as "Status",
+  b_swo.data->>'remark' as "Remark",
   TO_CHAR(TO_TIMESTAMP(( NULLIF(b_swo.data->>'last_change','') )::bigint/1000) , 'YYYY-MM-DD')::text as "Last change",
   b_swo.data->>'created_by' as "Created by"
  FROM forms_data as b_swo
