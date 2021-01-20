@@ -157,3 +157,35 @@ airtable = Airtable('appIZ8SjK4PI6fDWc','Sites',api_key='key2oMENkcz6kdrIy')
 exec(execAirtable)
 
 #airtable.update_by_field('SITE ID', 'AYYN_0138', {'Site survey': 'Test script','Label':'scriptons'})
+
+#____________
+#Select Airtable
+
+#Airtable library
+import os
+from pprint import pprint
+from airtable import Airtable
+#MySQL library
+import mysql_module
+import mysql.connector
+
+airtable = Airtable('appIZ8SjK4PI6fDWc','Sites',api_key='key2oMENkcz6kdrIy')
+
+test = airtable.get_all(maxRecords=20)
+
+
+test = airtable.get_all(maxRecords=20)
+
+
+print(test)
+
+
+step1 = list(test[0].values())
+step2 = step1[1]
+columnstep3 = list(step2)
+datastep3 = list(step2.values())
+print(columnstep3)
+print(datastep3)
+
+
+#airtable.get_all(view='MyView', maxRecords=20)

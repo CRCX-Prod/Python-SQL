@@ -55,13 +55,13 @@ def insertData (connection,myTable,myColumns,myData):
         database="00_cos_warehouse"
         )
     """    
-    mycursor = connection.cursor()
+        mycursor = connection.cursor()
 
-    myColumnsString = formatColumns(myColumns)
-    myIncr = formatIncr(myColumns)
+        myColumnsString = formatColumns(myColumns)
+        myIncr = formatIncr(myColumns)
 
-    sql = "INSERT INTO {} {} VALUES {}"
-    sql = sql.format(myTable,myColumnsString,myIncr)
+        sql = "INSERT INTO {} {} VALUES {}"
+        sql = sql.format(myTable,myColumnsString,myIncr)
 
     mycursor.executemany(sql, myData)
     connection.commit()
